@@ -1,0 +1,4822 @@
+Terminais não usados na gramática
+
+    tPRIVATE
+    tTDIMS
+    tIFX
+
+
+Estado 85 conflitos: 3 troca/redução
+Estado 86 conflitos: 3 troca/redução
+Estado 88 conflitos: 1 troca/redução
+Estado 90 conflitos: 3 troca/redução
+Estado 120 conflitos: 1 troca/redução
+Estado 130 conflitos: 3 troca/redução
+Estado 133 conflitos: 16 troca/redução
+Estado 134 conflitos: 3 troca/redução
+Estado 135 conflitos: 3 troca/redução
+Estado 136 conflitos: 3 troca/redução
+Estado 137 conflitos: 3 troca/redução
+Estado 138 conflitos: 3 troca/redução
+Estado 139 conflitos: 3 troca/redução
+Estado 140 conflitos: 3 troca/redução
+Estado 141 conflitos: 3 troca/redução
+Estado 142 conflitos: 3 troca/redução
+Estado 143 conflitos: 3 troca/redução
+Estado 144 conflitos: 3 troca/redução
+Estado 145 conflitos: 3 troca/redução
+Estado 146 conflitos: 3 troca/redução
+Estado 152 conflitos: 1 troca/redução
+Estado 162 conflitos: 1 troca/redução
+Estado 171 conflitos: 1 troca/redução
+Estado 234 conflitos: 2 troca/redução
+Estado 236 conflitos: 2 redução/redução
+
+
+Gramática
+
+    0 $accept: file $end
+
+    1 file: ε
+    2     | declarations
+
+    3 declarations: declaration
+    4             | declarations declaration
+
+    5 declaration: vardec ';'
+    6            | fundec
+    7            | fundef
+
+    8 vardec: tFORWARD data_type tID
+    9       | tPUBLIC data_type tID opt_initializer
+   10       | data_type tID opt_initializer
+   11       | tPUBLIC tAUTO_TYPE tID '=' expr
+   12       | tAUTO_TYPE tID '=' expr
+
+   13 vardecs: vardec ';'
+   14        | vardecs vardec ';'
+
+   15 opt_vardecs: ε
+   16            | vardecs
+
+   17 data_type: tSTRING_TYPE
+   18          | tINT_TYPE
+   19          | tREAL_TYPE
+   20          | tVOID_TYPE
+   21          | tTENSOR_TYPE '<' tensor_dims '>'
+   22          | tPTR_TYPE '<' data_type '>'
+   23          | tPTR_TYPE '<' tAUTO_TYPE '>'
+
+   24 tensor_dims: tINTEGER
+   25            | tensor_dims ',' tINTEGER
+
+   26 opt_initializer: ε
+   27                | '=' expr
+
+   28 fundec: data_type tID '(' argdecs ')'
+   29       | tFORWARD data_type tID '(' argdecs ')'
+   30       | tPUBLIC data_type tID '(' argdecs ')'
+   31       | tAUTO_TYPE tID '(' argdecs ')'
+   32       | tFORWARD tAUTO_TYPE tID '(' argdecs ')'
+   33       | tPUBLIC tAUTO_TYPE tID '(' argdecs ')'
+
+   34 fundef: data_type tID '(' argdecs ')' block
+   35       | tPUBLIC data_type tID '(' argdecs ')' block
+   36       | tAUTO_TYPE tID '(' argdecs ')' block
+   37       | tPUBLIC tAUTO_TYPE tID '(' argdecs ')' block
+
+   38 argdecs: ε
+   39        | argdec
+   40        | argdecs ',' argdec
+
+   41 argdec: data_type tID
+
+   42 block: '{' opt_vardecs opt_stmts '}'
+
+   43 fordec: data_type tID '=' expr
+
+   44 fordecs: fordec
+   45        | fordecs ',' fordec
+
+   46 opt_forinit: ε
+   47            | fordecs
+   48            | tAUTO_TYPE tID '=' exprs
+   49            | exprs
+
+   50 return: tRETURN ';'
+   51       | tRETURN expr ';'
+
+   52 stmts: stmt
+   53      | stmts stmt
+
+   54 opt_stmts: ε
+   55          | stmts
+
+   56 stmt: tIF '(' expr ')' stmt
+   57     | tIF '(' expr ')' stmt iffalse
+   58     | tFOR '(' opt_forinit ';' opt_exprs ';' opt_exprs ')' stmt
+   59     | expr ';'
+   60     | tPRINT exprs ';'
+   61     | tPRINTLN exprs ';'
+   62     | tBREAK
+   63     | tCONTINUE
+   64     | return
+   65     | block
+
+   66 iffalse: tELSE stmt
+   67        | tELIF '(' expr ')' stmt iffalse
+
+   68 lvalue: tID
+   69       | lvalue '[' expr ']'
+   70       | '(' expr ')' '[' expr ']'
+   71       | tID '(' opt_exprs ')' '[' expr ']'
+   72       | expr tTINDEX '(' exprs ')'
+
+   73 expr: integer
+   74     | real
+   75     | string
+   76     | tNULLPTR
+   77     | tTENSOR_TYPE '<' exprs '>'
+   78     | tensor_literal
+   79     | expr '.' tTCAPACITY
+   80     | expr '.' tTRANK
+   81     | expr '.' tTDIM '(' expr ')'
+   82     | expr '.' tTRESHAPE '(' exprs ')'
+   83     | expr tTCONTRACTION expr
+   84     | lvalue
+   85     | lvalue '=' expr
+   86     | expr '+' expr
+   87     | expr '-' expr
+   88     | expr '*' expr
+   89     | expr '/' expr
+   90     | expr '%' expr
+   91     | expr '<' expr
+   92     | expr tLE expr
+   93     | expr tEQ expr
+   94     | expr tGE expr
+   95     | expr '>' expr
+   96     | expr tNE expr
+   97     | expr tAND expr
+   98     | expr tOR expr
+   99     | '-' expr
+  100     | '+' expr
+  101     | '~' expr
+  102     | tINPUT
+  103     | tOBJECTS '(' expr ')'
+  104     | tID '(' opt_exprs ')'
+  105     | tSIZEOF '(' exprs ')'
+  106     | '(' expr ')'
+  107     | '[' expr ']'
+  108     | lvalue '?'
+
+  109 exprs: expr
+  110      | exprs ',' expr
+
+  111 opt_exprs: ε
+  112          | exprs
+
+  113 tensor_literal: '[' exprs ']'
+
+  114 integer: tINTEGER
+
+  115 real: tREAL
+
+  116 string: tSTRING
+  117       | string tSTRING
+
+
+Terminais, com regras onde aparecem
+
+    $end (0) 0
+    '%' (37) 90
+    '(' (40) 28 29 30 31 32 33 34 35 36 37 56 57 58 67 70 71 72 81 82 103 104 105 106
+    ')' (41) 28 29 30 31 32 33 34 35 36 37 56 57 58 67 70 71 72 81 82 103 104 105 106
+    '*' (42) 88
+    '+' (43) 86 100
+    ',' (44) 25 40 45 110
+    '-' (45) 87 99
+    '.' (46) 79 80 81 82
+    '/' (47) 89
+    ';' (59) 5 13 14 50 51 58 59 60 61
+    '<' (60) 21 22 23 77 91
+    '=' (61) 11 12 27 43 48 85
+    '>' (62) 21 22 23 77 95
+    '?' (63) 108
+    '[' (91) 69 70 71 107 113
+    ']' (93) 69 70 71 107 113
+    '{' (123) 42
+    '}' (125) 42
+    '~' (126) 101
+    error (256)
+    tPUBLIC (258) 9 11 30 33 35 37
+    tPRIVATE (259)
+    tFORWARD (260) 8 29 32
+    tAUTO_TYPE (261) 11 12 23 31 32 33 36 37 48
+    tSTRING_TYPE (262) 17
+    tINT_TYPE (263) 18
+    tREAL_TYPE (264) 19
+    tPTR_TYPE (265) 22 23
+    tTENSOR_TYPE (266) 21 77
+    tVOID_TYPE (267) 20
+    tIF (268) 56 57
+    tELIF (269) 67
+    tELSE (270) 66
+    tFOR (271) 58
+    tBREAK (272) 62
+    tCONTINUE (273) 63
+    tRETURN (274) 50 51
+    tOBJECTS (275) 103
+    tTCAPACITY (276) 79
+    tTRANK (277) 80
+    tTDIMS (278)
+    tTDIM (279) 81
+    tTINDEX (280) 72
+    tTRESHAPE (281) 82
+    tTCONTRACTION (282) 83
+    tPRINT (283) 60
+    tPRINTLN (284) 61
+    tINPUT (285) 102
+    tSIZEOF (286) 105
+    tUMINUS (287)
+    tIFX (288)
+    tINTEGER <i> (289) 24 25 114
+    tREAL <d> (290) 115
+    tSTRING <s> (291) 116 117
+    tID <s> (292) 8 9 10 11 12 28 29 30 31 32 33 34 35 36 37 41 43 48 68 71 104
+    tNULLPTR <expression> (293) 76
+    tOR (294) 98
+    tAND (295) 97
+    tEQ (296) 93
+    tNE (297) 96
+    tGE (298) 94
+    tLE (299) 92
+    tUNARY (300)
+
+
+Não terminais, com regras onde aparecem
+
+    $accept (65)
+        à esquerda: 0
+    file <sequence> (66)
+        à esquerda: 1 2
+        à direita: 0
+    declarations <sequence> (67)
+        à esquerda: 3 4
+        à direita: 2 4
+    declaration <node> (68)
+        à esquerda: 5 6 7
+        à direita: 3 4
+    vardec <node> (69)
+        à esquerda: 8 9 10 11 12
+        à direita: 5 13 14
+    vardecs <sequence> (70)
+        à esquerda: 13 14
+        à direita: 14 16
+    opt_vardecs <sequence> (71)
+        à esquerda: 15 16
+        à direita: 42
+    data_type <type> (72)
+        à esquerda: 17 18 19 20 21 22 23
+        à direita: 8 9 10 22 28 29 30 34 35 41 43
+    tensor_dims <dims> (73)
+        à esquerda: 24 25
+        à direita: 21 25
+    opt_initializer <expression> (74)
+        à esquerda: 26 27
+        à direita: 9 10
+    fundec <node> (75)
+        à esquerda: 28 29 30 31 32 33
+        à direita: 6
+    fundef <node> (76)
+        à esquerda: 34 35 36 37
+        à direita: 7
+    argdecs <sequence> (77)
+        à esquerda: 38 39 40
+        à direita: 28 29 30 31 32 33 34 35 36 37 40
+    argdec <node> (78)
+        à esquerda: 41
+        à direita: 39 40
+    block <block> (79)
+        à esquerda: 42
+        à direita: 34 35 36 37 65
+    fordec <node> (80)
+        à esquerda: 43
+        à direita: 44 45
+    fordecs <sequence> (81)
+        à esquerda: 44 45
+        à direita: 45 47
+    opt_forinit <node> (82)
+        à esquerda: 46 47 48 49
+        à direita: 58
+    return <node> (83)
+        à esquerda: 50 51
+        à direita: 64
+    stmts <sequence> (84)
+        à esquerda: 52 53
+        à direita: 53 55
+    opt_stmts <sequence> (85)
+        à esquerda: 54 55
+        à direita: 42
+    stmt <node> (86)
+        à esquerda: 56 57 58 59 60 61 62 63 64 65
+        à direita: 52 53 56 57 58 66 67
+    iffalse <node> (87)
+        à esquerda: 66 67
+        à direita: 57 67
+    lvalue <lvalue> (88)
+        à esquerda: 68 69 70 71 72
+        à direita: 69 84 85 108
+    expr <expression> (89)
+        à esquerda: 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108
+        à direita: 11 12 27 43 51 56 57 59 67 69 70 71 72 79 80 81 82 83 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 103 106 107 109 110
+    exprs <sequence> (90)
+        à esquerda: 109 110
+        à direita: 48 49 60 61 72 77 82 105 110 112 113
+    opt_exprs <sequence> (91)
+        à esquerda: 111 112
+        à direita: 58 71 104
+    tensor_literal <expression> (92)
+        à esquerda: 113
+        à direita: 78
+    integer <expression> (93)
+        à esquerda: 114
+        à direita: 73
+    real <expression> (94)
+        à esquerda: 115
+        à direita: 74
+    string <s> (95)
+        à esquerda: 116 117
+        à direita: 75 117
+
+
+Estado 0
+
+    0 $accept: • file $end
+
+    tPUBLIC       troca e vai para estado 1
+    tFORWARD      troca e vai para estado 2
+    tAUTO_TYPE    troca e vai para estado 3
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    $default  redução com regra 1 (file)
+
+    file          vai para estado 10
+    declarations  vai para estado 11
+    declaration   vai para estado 12
+    vardec        vai para estado 13
+    data_type     vai para estado 14
+    fundec        vai para estado 15
+    fundef        vai para estado 16
+
+
+Estado 1
+
+    9 vardec: tPUBLIC • data_type tID opt_initializer
+   11       | tPUBLIC • tAUTO_TYPE tID '=' expr
+   30 fundec: tPUBLIC • data_type tID '(' argdecs ')'
+   33       | tPUBLIC • tAUTO_TYPE tID '(' argdecs ')'
+   35 fundef: tPUBLIC • data_type tID '(' argdecs ')' block
+   37       | tPUBLIC • tAUTO_TYPE tID '(' argdecs ')' block
+
+    tAUTO_TYPE    troca e vai para estado 17
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    data_type  vai para estado 18
+
+
+Estado 2
+
+    8 vardec: tFORWARD • data_type tID
+   29 fundec: tFORWARD • data_type tID '(' argdecs ')'
+   32       | tFORWARD • tAUTO_TYPE tID '(' argdecs ')'
+
+    tAUTO_TYPE    troca e vai para estado 19
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    data_type  vai para estado 20
+
+
+Estado 3
+
+   12 vardec: tAUTO_TYPE • tID '=' expr
+   31 fundec: tAUTO_TYPE • tID '(' argdecs ')'
+   36 fundef: tAUTO_TYPE • tID '(' argdecs ')' block
+
+    tID  troca e vai para estado 21
+
+
+Estado 4
+
+   17 data_type: tSTRING_TYPE •
+
+    $default  redução com regra 17 (data_type)
+
+
+Estado 5
+
+   18 data_type: tINT_TYPE •
+
+    $default  redução com regra 18 (data_type)
+
+
+Estado 6
+
+   19 data_type: tREAL_TYPE •
+
+    $default  redução com regra 19 (data_type)
+
+
+Estado 7
+
+   22 data_type: tPTR_TYPE • '<' data_type '>'
+   23          | tPTR_TYPE • '<' tAUTO_TYPE '>'
+
+    '<'  troca e vai para estado 22
+
+
+Estado 8
+
+   21 data_type: tTENSOR_TYPE • '<' tensor_dims '>'
+
+    '<'  troca e vai para estado 23
+
+
+Estado 9
+
+   20 data_type: tVOID_TYPE •
+
+    $default  redução com regra 20 (data_type)
+
+
+Estado 10
+
+    0 $accept: file • $end
+
+    $end  troca e vai para estado 24
+
+
+Estado 11
+
+    2 file: declarations •
+    4 declarations: declarations • declaration
+
+    tPUBLIC       troca e vai para estado 1
+    tFORWARD      troca e vai para estado 2
+    tAUTO_TYPE    troca e vai para estado 3
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    $default  redução com regra 2 (file)
+
+    declaration  vai para estado 25
+    vardec       vai para estado 13
+    data_type    vai para estado 14
+    fundec       vai para estado 15
+    fundef       vai para estado 16
+
+
+Estado 12
+
+    3 declarations: declaration •
+
+    $default  redução com regra 3 (declarations)
+
+
+Estado 13
+
+    5 declaration: vardec • ';'
+
+    ';'  troca e vai para estado 26
+
+
+Estado 14
+
+   10 vardec: data_type • tID opt_initializer
+   28 fundec: data_type • tID '(' argdecs ')'
+   34 fundef: data_type • tID '(' argdecs ')' block
+
+    tID  troca e vai para estado 27
+
+
+Estado 15
+
+    6 declaration: fundec •
+
+    $default  redução com regra 6 (declaration)
+
+
+Estado 16
+
+    7 declaration: fundef •
+
+    $default  redução com regra 7 (declaration)
+
+
+Estado 17
+
+   11 vardec: tPUBLIC tAUTO_TYPE • tID '=' expr
+   33 fundec: tPUBLIC tAUTO_TYPE • tID '(' argdecs ')'
+   37 fundef: tPUBLIC tAUTO_TYPE • tID '(' argdecs ')' block
+
+    tID  troca e vai para estado 28
+
+
+Estado 18
+
+    9 vardec: tPUBLIC data_type • tID opt_initializer
+   30 fundec: tPUBLIC data_type • tID '(' argdecs ')'
+   35 fundef: tPUBLIC data_type • tID '(' argdecs ')' block
+
+    tID  troca e vai para estado 29
+
+
+Estado 19
+
+   32 fundec: tFORWARD tAUTO_TYPE • tID '(' argdecs ')'
+
+    tID  troca e vai para estado 30
+
+
+Estado 20
+
+    8 vardec: tFORWARD data_type • tID
+   29 fundec: tFORWARD data_type • tID '(' argdecs ')'
+
+    tID  troca e vai para estado 31
+
+
+Estado 21
+
+   12 vardec: tAUTO_TYPE tID • '=' expr
+   31 fundec: tAUTO_TYPE tID • '(' argdecs ')'
+   36 fundef: tAUTO_TYPE tID • '(' argdecs ')' block
+
+    '='  troca e vai para estado 32
+    '('  troca e vai para estado 33
+
+
+Estado 22
+
+   22 data_type: tPTR_TYPE '<' • data_type '>'
+   23          | tPTR_TYPE '<' • tAUTO_TYPE '>'
+
+    tAUTO_TYPE    troca e vai para estado 34
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    data_type  vai para estado 35
+
+
+Estado 23
+
+   21 data_type: tTENSOR_TYPE '<' • tensor_dims '>'
+
+    tINTEGER  troca e vai para estado 36
+
+    tensor_dims  vai para estado 37
+
+
+Estado 24
+
+    0 $accept: file $end •
+
+    $default  aceitar
+
+
+Estado 25
+
+    4 declarations: declarations declaration •
+
+    $default  redução com regra 4 (declarations)
+
+
+Estado 26
+
+    5 declaration: vardec ';' •
+
+    $default  redução com regra 5 (declaration)
+
+
+Estado 27
+
+   10 vardec: data_type tID • opt_initializer
+   28 fundec: data_type tID • '(' argdecs ')'
+   34 fundef: data_type tID • '(' argdecs ')' block
+
+    '='  troca e vai para estado 38
+    '('  troca e vai para estado 39
+
+    $default  redução com regra 26 (opt_initializer)
+
+    opt_initializer  vai para estado 40
+
+
+Estado 28
+
+   11 vardec: tPUBLIC tAUTO_TYPE tID • '=' expr
+   33 fundec: tPUBLIC tAUTO_TYPE tID • '(' argdecs ')'
+   37 fundef: tPUBLIC tAUTO_TYPE tID • '(' argdecs ')' block
+
+    '='  troca e vai para estado 41
+    '('  troca e vai para estado 42
+
+
+Estado 29
+
+    9 vardec: tPUBLIC data_type tID • opt_initializer
+   30 fundec: tPUBLIC data_type tID • '(' argdecs ')'
+   35 fundef: tPUBLIC data_type tID • '(' argdecs ')' block
+
+    '='  troca e vai para estado 38
+    '('  troca e vai para estado 43
+
+    $default  redução com regra 26 (opt_initializer)
+
+    opt_initializer  vai para estado 44
+
+
+Estado 30
+
+   32 fundec: tFORWARD tAUTO_TYPE tID • '(' argdecs ')'
+
+    '('  troca e vai para estado 45
+
+
+Estado 31
+
+    8 vardec: tFORWARD data_type tID •
+   29 fundec: tFORWARD data_type tID • '(' argdecs ')'
+
+    '('  troca e vai para estado 46
+
+    $default  redução com regra 8 (vardec)
+
+
+Estado 32
+
+   12 vardec: tAUTO_TYPE tID '=' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 62
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 33
+
+   31 fundec: tAUTO_TYPE tID '(' • argdecs ')'
+   36 fundef: tAUTO_TYPE tID '(' • argdecs ')' block
+
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    $default  redução com regra 38 (argdecs)
+
+    data_type  vai para estado 67
+    argdecs    vai para estado 68
+    argdec     vai para estado 69
+
+
+Estado 34
+
+   23 data_type: tPTR_TYPE '<' tAUTO_TYPE • '>'
+
+    '>'  troca e vai para estado 70
+
+
+Estado 35
+
+   22 data_type: tPTR_TYPE '<' data_type • '>'
+
+    '>'  troca e vai para estado 71
+
+
+Estado 36
+
+   24 tensor_dims: tINTEGER •
+
+    $default  redução com regra 24 (tensor_dims)
+
+
+Estado 37
+
+   21 data_type: tTENSOR_TYPE '<' tensor_dims • '>'
+   25 tensor_dims: tensor_dims • ',' tINTEGER
+
+    '>'  troca e vai para estado 72
+    ','  troca e vai para estado 73
+
+
+Estado 38
+
+   27 opt_initializer: '=' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 74
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 39
+
+   28 fundec: data_type tID '(' • argdecs ')'
+   34 fundef: data_type tID '(' • argdecs ')' block
+
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    $default  redução com regra 38 (argdecs)
+
+    data_type  vai para estado 67
+    argdecs    vai para estado 75
+    argdec     vai para estado 69
+
+
+Estado 40
+
+   10 vardec: data_type tID opt_initializer •
+
+    $default  redução com regra 10 (vardec)
+
+
+Estado 41
+
+   11 vardec: tPUBLIC tAUTO_TYPE tID '=' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 76
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 42
+
+   33 fundec: tPUBLIC tAUTO_TYPE tID '(' • argdecs ')'
+   37 fundef: tPUBLIC tAUTO_TYPE tID '(' • argdecs ')' block
+
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    $default  redução com regra 38 (argdecs)
+
+    data_type  vai para estado 67
+    argdecs    vai para estado 77
+    argdec     vai para estado 69
+
+
+Estado 43
+
+   30 fundec: tPUBLIC data_type tID '(' • argdecs ')'
+   35 fundef: tPUBLIC data_type tID '(' • argdecs ')' block
+
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    $default  redução com regra 38 (argdecs)
+
+    data_type  vai para estado 67
+    argdecs    vai para estado 78
+    argdec     vai para estado 69
+
+
+Estado 44
+
+    9 vardec: tPUBLIC data_type tID opt_initializer •
+
+    $default  redução com regra 9 (vardec)
+
+
+Estado 45
+
+   32 fundec: tFORWARD tAUTO_TYPE tID '(' • argdecs ')'
+
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    $default  redução com regra 38 (argdecs)
+
+    data_type  vai para estado 67
+    argdecs    vai para estado 79
+    argdec     vai para estado 69
+
+
+Estado 46
+
+   29 fundec: tFORWARD data_type tID '(' • argdecs ')'
+
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    $default  redução com regra 38 (argdecs)
+
+    data_type  vai para estado 67
+    argdecs    vai para estado 80
+    argdec     vai para estado 69
+
+
+Estado 47
+
+   77 expr: tTENSOR_TYPE • '<' exprs '>'
+
+    '<'  troca e vai para estado 81
+
+
+Estado 48
+
+  103 expr: tOBJECTS • '(' expr ')'
+
+    '('  troca e vai para estado 82
+
+
+Estado 49
+
+  102 expr: tINPUT •
+
+    $default  redução com regra 102 (expr)
+
+
+Estado 50
+
+  105 expr: tSIZEOF • '(' exprs ')'
+
+    '('  troca e vai para estado 83
+
+
+Estado 51
+
+  114 integer: tINTEGER •
+
+    $default  redução com regra 114 (integer)
+
+
+Estado 52
+
+  115 real: tREAL •
+
+    $default  redução com regra 115 (real)
+
+
+Estado 53
+
+  116 string: tSTRING •
+
+    $default  redução com regra 116 (string)
+
+
+Estado 54
+
+   68 lvalue: tID •
+   71       | tID • '(' opt_exprs ')' '[' expr ']'
+  104 expr: tID • '(' opt_exprs ')'
+
+    '('  troca e vai para estado 84
+
+    $default  redução com regra 68 (lvalue)
+
+
+Estado 55
+
+   76 expr: tNULLPTR •
+
+    $default  redução com regra 76 (expr)
+
+
+Estado 56
+
+  100 expr: '+' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 85
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 57
+
+   99 expr: '-' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 86
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 58
+
+   70 lvalue: '(' • expr ')' '[' expr ']'
+  106 expr: '(' • expr ')'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 87
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 59
+
+  107 expr: '[' • expr ']'
+  113 tensor_literal: '[' • exprs ']'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 88
+    exprs           vai para estado 89
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 60
+
+  101 expr: '~' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 90
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 61
+
+   69 lvalue: lvalue • '[' expr ']'
+   84 expr: lvalue •
+   85     | lvalue • '=' expr
+  108     | lvalue • '?'
+
+    '='  troca e vai para estado 91
+    '['  troca e vai para estado 92
+    '?'  troca e vai para estado 93
+
+    $default  redução com regra 84 (expr)
+
+
+Estado 62
+
+   12 vardec: tAUTO_TYPE tID '=' expr •
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    $default  redução com regra 12 (vardec)
+
+
+Estado 63
+
+   78 expr: tensor_literal •
+
+    $default  redução com regra 78 (expr)
+
+
+Estado 64
+
+   73 expr: integer •
+
+    $default  redução com regra 73 (expr)
+
+
+Estado 65
+
+   74 expr: real •
+
+    $default  redução com regra 74 (expr)
+
+
+Estado 66
+
+   75 expr: string •
+  117 string: string • tSTRING
+
+    tSTRING  troca e vai para estado 110
+
+    $default  redução com regra 75 (expr)
+
+
+Estado 67
+
+   41 argdec: data_type • tID
+
+    tID  troca e vai para estado 111
+
+
+Estado 68
+
+   31 fundec: tAUTO_TYPE tID '(' argdecs • ')'
+   36 fundef: tAUTO_TYPE tID '(' argdecs • ')' block
+   40 argdecs: argdecs • ',' argdec
+
+    ','  troca e vai para estado 112
+    ')'  troca e vai para estado 113
+
+
+Estado 69
+
+   39 argdecs: argdec •
+
+    $default  redução com regra 39 (argdecs)
+
+
+Estado 70
+
+   23 data_type: tPTR_TYPE '<' tAUTO_TYPE '>' •
+
+    $default  redução com regra 23 (data_type)
+
+
+Estado 71
+
+   22 data_type: tPTR_TYPE '<' data_type '>' •
+
+    $default  redução com regra 22 (data_type)
+
+
+Estado 72
+
+   21 data_type: tTENSOR_TYPE '<' tensor_dims '>' •
+
+    $default  redução com regra 21 (data_type)
+
+
+Estado 73
+
+   25 tensor_dims: tensor_dims ',' • tINTEGER
+
+    tINTEGER  troca e vai para estado 114
+
+
+Estado 74
+
+   27 opt_initializer: '=' expr •
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    $default  redução com regra 27 (opt_initializer)
+
+
+Estado 75
+
+   28 fundec: data_type tID '(' argdecs • ')'
+   34 fundef: data_type tID '(' argdecs • ')' block
+   40 argdecs: argdecs • ',' argdec
+
+    ','  troca e vai para estado 112
+    ')'  troca e vai para estado 115
+
+
+Estado 76
+
+   11 vardec: tPUBLIC tAUTO_TYPE tID '=' expr •
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    $default  redução com regra 11 (vardec)
+
+
+Estado 77
+
+   33 fundec: tPUBLIC tAUTO_TYPE tID '(' argdecs • ')'
+   37 fundef: tPUBLIC tAUTO_TYPE tID '(' argdecs • ')' block
+   40 argdecs: argdecs • ',' argdec
+
+    ','  troca e vai para estado 112
+    ')'  troca e vai para estado 116
+
+
+Estado 78
+
+   30 fundec: tPUBLIC data_type tID '(' argdecs • ')'
+   35 fundef: tPUBLIC data_type tID '(' argdecs • ')' block
+   40 argdecs: argdecs • ',' argdec
+
+    ','  troca e vai para estado 112
+    ')'  troca e vai para estado 117
+
+
+Estado 79
+
+   32 fundec: tFORWARD tAUTO_TYPE tID '(' argdecs • ')'
+   40 argdecs: argdecs • ',' argdec
+
+    ','  troca e vai para estado 112
+    ')'  troca e vai para estado 118
+
+
+Estado 80
+
+   29 fundec: tFORWARD data_type tID '(' argdecs • ')'
+   40 argdecs: argdecs • ',' argdec
+
+    ','  troca e vai para estado 112
+    ')'  troca e vai para estado 119
+
+
+Estado 81
+
+   77 expr: tTENSOR_TYPE '<' • exprs '>'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 121
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 82
+
+  103 expr: tOBJECTS '(' • expr ')'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 122
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 83
+
+  105 expr: tSIZEOF '(' • exprs ')'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 123
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 84
+
+   71 lvalue: tID '(' • opt_exprs ')' '[' expr ']'
+  104 expr: tID '(' • opt_exprs ')'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    $default  redução com regra 111 (opt_exprs)
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 124
+    opt_exprs       vai para estado 125
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 85
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+  100     | '+' expr •
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 100 (expr)]
+    tTCONTRACTION  [redução com regra 100 (expr)]
+    '.'            [redução com regra 100 (expr)]
+    $default       redução com regra 100 (expr)
+
+
+Estado 86
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+   99     | '-' expr •
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 99 (expr)]
+    tTCONTRACTION  [redução com regra 99 (expr)]
+    '.'            [redução com regra 99 (expr)]
+    $default       redução com regra 99 (expr)
+
+
+Estado 87
+
+   70 lvalue: '(' expr • ')' '[' expr ']'
+   72       | expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+  106     | '(' expr • ')'
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ')'            troca e vai para estado 126
+    '.'            troca e vai para estado 109
+
+
+Estado 88
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+  107     | '[' expr • ']'
+  109 exprs: expr •
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ']'            troca e vai para estado 127
+    '.'            troca e vai para estado 109
+
+    ']'       [redução com regra 109 (exprs)]
+    $default  redução com regra 109 (exprs)
+
+
+Estado 89
+
+  110 exprs: exprs • ',' expr
+  113 tensor_literal: '[' exprs • ']'
+
+    ','  troca e vai para estado 128
+    ']'  troca e vai para estado 129
+
+
+Estado 90
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+  101     | '~' expr •
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 101 (expr)]
+    tTCONTRACTION  [redução com regra 101 (expr)]
+    '.'            [redução com regra 101 (expr)]
+    $default       redução com regra 101 (expr)
+
+
+Estado 91
+
+   85 expr: lvalue '=' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 130
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 92
+
+   69 lvalue: lvalue '[' • expr ']'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 131
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 93
+
+  108 expr: lvalue '?' •
+
+    $default  redução com regra 108 (expr)
+
+
+Estado 94
+
+   72 lvalue: expr tTINDEX • '(' exprs ')'
+
+    '('  troca e vai para estado 132
+
+
+Estado 95
+
+   83 expr: expr tTCONTRACTION • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 133
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 96
+
+   98 expr: expr tOR • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 134
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 97
+
+   97 expr: expr tAND • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 135
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 98
+
+   93 expr: expr tEQ • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 136
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 99
+
+   96 expr: expr tNE • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 137
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 100
+
+   94 expr: expr tGE • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 138
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 101
+
+   92 expr: expr tLE • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 139
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 102
+
+   95 expr: expr '>' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 140
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 103
+
+   91 expr: expr '<' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 141
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 104
+
+   86 expr: expr '+' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 142
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 105
+
+   87 expr: expr '-' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 143
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 106
+
+   88 expr: expr '*' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 144
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 107
+
+   89 expr: expr '/' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 145
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 108
+
+   90 expr: expr '%' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 146
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 109
+
+   79 expr: expr '.' • tTCAPACITY
+   80     | expr '.' • tTRANK
+   81     | expr '.' • tTDIM '(' expr ')'
+   82     | expr '.' • tTRESHAPE '(' exprs ')'
+
+    tTCAPACITY  troca e vai para estado 147
+    tTRANK      troca e vai para estado 148
+    tTDIM       troca e vai para estado 149
+    tTRESHAPE   troca e vai para estado 150
+
+
+Estado 110
+
+  117 string: string tSTRING •
+
+    $default  redução com regra 117 (string)
+
+
+Estado 111
+
+   41 argdec: data_type tID •
+
+    $default  redução com regra 41 (argdec)
+
+
+Estado 112
+
+   40 argdecs: argdecs ',' • argdec
+
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    data_type  vai para estado 67
+    argdec     vai para estado 151
+
+
+Estado 113
+
+   31 fundec: tAUTO_TYPE tID '(' argdecs ')' •
+   36 fundef: tAUTO_TYPE tID '(' argdecs ')' • block
+
+    '{'  troca e vai para estado 152
+
+    $default  redução com regra 31 (fundec)
+
+    block  vai para estado 153
+
+
+Estado 114
+
+   25 tensor_dims: tensor_dims ',' tINTEGER •
+
+    $default  redução com regra 25 (tensor_dims)
+
+
+Estado 115
+
+   28 fundec: data_type tID '(' argdecs ')' •
+   34 fundef: data_type tID '(' argdecs ')' • block
+
+    '{'  troca e vai para estado 152
+
+    $default  redução com regra 28 (fundec)
+
+    block  vai para estado 154
+
+
+Estado 116
+
+   33 fundec: tPUBLIC tAUTO_TYPE tID '(' argdecs ')' •
+   37 fundef: tPUBLIC tAUTO_TYPE tID '(' argdecs ')' • block
+
+    '{'  troca e vai para estado 152
+
+    $default  redução com regra 33 (fundec)
+
+    block  vai para estado 155
+
+
+Estado 117
+
+   30 fundec: tPUBLIC data_type tID '(' argdecs ')' •
+   35 fundef: tPUBLIC data_type tID '(' argdecs ')' • block
+
+    '{'  troca e vai para estado 152
+
+    $default  redução com regra 30 (fundec)
+
+    block  vai para estado 156
+
+
+Estado 118
+
+   32 fundec: tFORWARD tAUTO_TYPE tID '(' argdecs ')' •
+
+    $default  redução com regra 32 (fundec)
+
+
+Estado 119
+
+   29 fundec: tFORWARD data_type tID '(' argdecs ')' •
+
+    $default  redução com regra 29 (fundec)
+
+
+Estado 120
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+  109 exprs: expr •
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    '>'       [redução com regra 109 (exprs)]
+    $default  redução com regra 109 (exprs)
+
+
+Estado 121
+
+   77 expr: tTENSOR_TYPE '<' exprs • '>'
+  110 exprs: exprs • ',' expr
+
+    '>'  troca e vai para estado 157
+    ','  troca e vai para estado 128
+
+
+Estado 122
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+  103     | tOBJECTS '(' expr • ')'
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ')'            troca e vai para estado 158
+    '.'            troca e vai para estado 109
+
+
+Estado 123
+
+  105 expr: tSIZEOF '(' exprs • ')'
+  110 exprs: exprs • ',' expr
+
+    ','  troca e vai para estado 128
+    ')'  troca e vai para estado 159
+
+
+Estado 124
+
+  110 exprs: exprs • ',' expr
+  112 opt_exprs: exprs •
+
+    ','  troca e vai para estado 128
+
+    $default  redução com regra 112 (opt_exprs)
+
+
+Estado 125
+
+   71 lvalue: tID '(' opt_exprs • ')' '[' expr ']'
+  104 expr: tID '(' opt_exprs • ')'
+
+    ')'  troca e vai para estado 160
+
+
+Estado 126
+
+   70 lvalue: '(' expr ')' • '[' expr ']'
+  106 expr: '(' expr ')' •
+
+    '['  troca e vai para estado 161
+
+    $default  redução com regra 106 (expr)
+
+
+Estado 127
+
+  107 expr: '[' expr ']' •
+
+    $default  redução com regra 107 (expr)
+
+
+Estado 128
+
+  110 exprs: exprs ',' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 162
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 129
+
+  113 tensor_literal: '[' exprs ']' •
+
+    $default  redução com regra 113 (tensor_literal)
+
+
+Estado 130
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   85     | lvalue '=' expr •
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 85 (expr)]
+    tTCONTRACTION  [redução com regra 85 (expr)]
+    '.'            [redução com regra 85 (expr)]
+    $default       redução com regra 85 (expr)
+
+
+Estado 131
+
+   69 lvalue: lvalue '[' expr • ']'
+   72       | expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ']'            troca e vai para estado 163
+    '.'            troca e vai para estado 109
+
+
+Estado 132
+
+   72 lvalue: expr tTINDEX '(' • exprs ')'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 164
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 133
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   83     | expr tTCONTRACTION expr •
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 83 (expr)]
+    tTCONTRACTION  [redução com regra 83 (expr)]
+    tOR            [redução com regra 83 (expr)]
+    tAND           [redução com regra 83 (expr)]
+    tEQ            [redução com regra 83 (expr)]
+    tNE            [redução com regra 83 (expr)]
+    tGE            [redução com regra 83 (expr)]
+    tLE            [redução com regra 83 (expr)]
+    '>'            [redução com regra 83 (expr)]
+    '<'            [redução com regra 83 (expr)]
+    '+'            [redução com regra 83 (expr)]
+    '-'            [redução com regra 83 (expr)]
+    '*'            [redução com regra 83 (expr)]
+    '/'            [redução com regra 83 (expr)]
+    '%'            [redução com regra 83 (expr)]
+    '.'            [redução com regra 83 (expr)]
+    $default       redução com regra 83 (expr)
+
+
+Estado 134
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+   98     | expr tOR expr •
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 98 (expr)]
+    tTCONTRACTION  [redução com regra 98 (expr)]
+    '.'            [redução com regra 98 (expr)]
+    $default       redução com regra 98 (expr)
+
+
+Estado 135
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   97     | expr tAND expr •
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 97 (expr)]
+    tTCONTRACTION  [redução com regra 97 (expr)]
+    '.'            [redução com regra 97 (expr)]
+    $default       redução com regra 97 (expr)
+
+
+Estado 136
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   93     | expr tEQ expr •
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 93 (expr)]
+    tTCONTRACTION  [redução com regra 93 (expr)]
+    '.'            [redução com regra 93 (expr)]
+    $default       redução com regra 93 (expr)
+
+
+Estado 137
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   96     | expr tNE expr •
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 96 (expr)]
+    tTCONTRACTION  [redução com regra 96 (expr)]
+    '.'            [redução com regra 96 (expr)]
+    $default       redução com regra 96 (expr)
+
+
+Estado 138
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   94     | expr tGE expr •
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 94 (expr)]
+    tTCONTRACTION  [redução com regra 94 (expr)]
+    '.'            [redução com regra 94 (expr)]
+    $default       redução com regra 94 (expr)
+
+
+Estado 139
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   92     | expr tLE expr •
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 92 (expr)]
+    tTCONTRACTION  [redução com regra 92 (expr)]
+    '.'            [redução com regra 92 (expr)]
+    $default       redução com regra 92 (expr)
+
+
+Estado 140
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   95     | expr '>' expr •
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 95 (expr)]
+    tTCONTRACTION  [redução com regra 95 (expr)]
+    '.'            [redução com regra 95 (expr)]
+    $default       redução com regra 95 (expr)
+
+
+Estado 141
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   91     | expr '<' expr •
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 91 (expr)]
+    tTCONTRACTION  [redução com regra 91 (expr)]
+    '.'            [redução com regra 91 (expr)]
+    $default       redução com regra 91 (expr)
+
+
+Estado 142
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   86     | expr '+' expr •
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 86 (expr)]
+    tTCONTRACTION  [redução com regra 86 (expr)]
+    '.'            [redução com regra 86 (expr)]
+    $default       redução com regra 86 (expr)
+
+
+Estado 143
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   87     | expr '-' expr •
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 87 (expr)]
+    tTCONTRACTION  [redução com regra 87 (expr)]
+    '.'            [redução com regra 87 (expr)]
+    $default       redução com regra 87 (expr)
+
+
+Estado 144
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   88     | expr '*' expr •
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 88 (expr)]
+    tTCONTRACTION  [redução com regra 88 (expr)]
+    '.'            [redução com regra 88 (expr)]
+    $default       redução com regra 88 (expr)
+
+
+Estado 145
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   89     | expr '/' expr •
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 89 (expr)]
+    tTCONTRACTION  [redução com regra 89 (expr)]
+    '.'            [redução com regra 89 (expr)]
+    $default       redução com regra 89 (expr)
+
+
+Estado 146
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   90     | expr '%' expr •
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    '.'            troca e vai para estado 109
+
+    tTINDEX        [redução com regra 90 (expr)]
+    tTCONTRACTION  [redução com regra 90 (expr)]
+    '.'            [redução com regra 90 (expr)]
+    $default       redução com regra 90 (expr)
+
+
+Estado 147
+
+   79 expr: expr '.' tTCAPACITY •
+
+    $default  redução com regra 79 (expr)
+
+
+Estado 148
+
+   80 expr: expr '.' tTRANK •
+
+    $default  redução com regra 80 (expr)
+
+
+Estado 149
+
+   81 expr: expr '.' tTDIM • '(' expr ')'
+
+    '('  troca e vai para estado 165
+
+
+Estado 150
+
+   82 expr: expr '.' tTRESHAPE • '(' exprs ')'
+
+    '('  troca e vai para estado 166
+
+
+Estado 151
+
+   40 argdecs: argdecs ',' argdec •
+
+    $default  redução com regra 40 (argdecs)
+
+
+Estado 152
+
+   42 block: '{' • opt_vardecs opt_stmts '}'
+
+    tPUBLIC       troca e vai para estado 167
+    tFORWARD      troca e vai para estado 168
+    tAUTO_TYPE    troca e vai para estado 169
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    tTENSOR_TYPE  [redução com regra 15 (opt_vardecs)]
+    $default      redução com regra 15 (opt_vardecs)
+
+    vardec       vai para estado 170
+    vardecs      vai para estado 171
+    opt_vardecs  vai para estado 172
+    data_type    vai para estado 173
+
+
+Estado 153
+
+   36 fundef: tAUTO_TYPE tID '(' argdecs ')' block •
+
+    $default  redução com regra 36 (fundef)
+
+
+Estado 154
+
+   34 fundef: data_type tID '(' argdecs ')' block •
+
+    $default  redução com regra 34 (fundef)
+
+
+Estado 155
+
+   37 fundef: tPUBLIC tAUTO_TYPE tID '(' argdecs ')' block •
+
+    $default  redução com regra 37 (fundef)
+
+
+Estado 156
+
+   35 fundef: tPUBLIC data_type tID '(' argdecs ')' block •
+
+    $default  redução com regra 35 (fundef)
+
+
+Estado 157
+
+   77 expr: tTENSOR_TYPE '<' exprs '>' •
+
+    $default  redução com regra 77 (expr)
+
+
+Estado 158
+
+  103 expr: tOBJECTS '(' expr ')' •
+
+    $default  redução com regra 103 (expr)
+
+
+Estado 159
+
+  105 expr: tSIZEOF '(' exprs ')' •
+
+    $default  redução com regra 105 (expr)
+
+
+Estado 160
+
+   71 lvalue: tID '(' opt_exprs ')' • '[' expr ']'
+  104 expr: tID '(' opt_exprs ')' •
+
+    '['  troca e vai para estado 174
+
+    $default  redução com regra 104 (expr)
+
+
+Estado 161
+
+   70 lvalue: '(' expr ')' '[' • expr ']'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 175
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 162
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+  110 exprs: exprs ',' expr •
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    '>'       [redução com regra 110 (exprs)]
+    $default  redução com regra 110 (exprs)
+
+
+Estado 163
+
+   69 lvalue: lvalue '[' expr ']' •
+
+    $default  redução com regra 69 (lvalue)
+
+
+Estado 164
+
+   72 lvalue: expr tTINDEX '(' exprs • ')'
+  110 exprs: exprs • ',' expr
+
+    ','  troca e vai para estado 128
+    ')'  troca e vai para estado 176
+
+
+Estado 165
+
+   81 expr: expr '.' tTDIM '(' • expr ')'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 177
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 166
+
+   82 expr: expr '.' tTRESHAPE '(' • exprs ')'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 178
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 167
+
+    9 vardec: tPUBLIC • data_type tID opt_initializer
+   11       | tPUBLIC • tAUTO_TYPE tID '=' expr
+
+    tAUTO_TYPE    troca e vai para estado 179
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    data_type  vai para estado 180
+
+
+Estado 168
+
+    8 vardec: tFORWARD • data_type tID
+
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    data_type  vai para estado 181
+
+
+Estado 169
+
+   12 vardec: tAUTO_TYPE • tID '=' expr
+
+    tID  troca e vai para estado 182
+
+
+Estado 170
+
+   13 vardecs: vardec • ';'
+
+    ';'  troca e vai para estado 183
+
+
+Estado 171
+
+   14 vardecs: vardecs • vardec ';'
+   16 opt_vardecs: vardecs •
+
+    tPUBLIC       troca e vai para estado 167
+    tFORWARD      troca e vai para estado 168
+    tAUTO_TYPE    troca e vai para estado 169
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    tTENSOR_TYPE  [redução com regra 16 (opt_vardecs)]
+    $default      redução com regra 16 (opt_vardecs)
+
+    vardec     vai para estado 184
+    data_type  vai para estado 173
+
+
+Estado 172
+
+   42 block: '{' opt_vardecs • opt_stmts '}'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tIF           troca e vai para estado 185
+    tFOR          troca e vai para estado 186
+    tBREAK        troca e vai para estado 187
+    tCONTINUE     troca e vai para estado 188
+    tRETURN       troca e vai para estado 189
+    tOBJECTS      troca e vai para estado 48
+    tPRINT        troca e vai para estado 190
+    tPRINTLN      troca e vai para estado 191
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '{'           troca e vai para estado 152
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    $default  redução com regra 54 (opt_stmts)
+
+    block           vai para estado 192
+    return          vai para estado 193
+    stmts           vai para estado 194
+    opt_stmts       vai para estado 195
+    stmt            vai para estado 196
+    lvalue          vai para estado 61
+    expr            vai para estado 197
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 173
+
+   10 vardec: data_type • tID opt_initializer
+
+    tID  troca e vai para estado 198
+
+
+Estado 174
+
+   71 lvalue: tID '(' opt_exprs ')' '[' • expr ']'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 199
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 175
+
+   70 lvalue: '(' expr ')' '[' expr • ']'
+   72       | expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ']'            troca e vai para estado 200
+    '.'            troca e vai para estado 109
+
+
+Estado 176
+
+   72 lvalue: expr tTINDEX '(' exprs ')' •
+
+    $default  redução com regra 72 (lvalue)
+
+
+Estado 177
+
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   81     | expr '.' tTDIM '(' expr • ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ')'            troca e vai para estado 201
+    '.'            troca e vai para estado 109
+
+
+Estado 178
+
+   82 expr: expr '.' tTRESHAPE '(' exprs • ')'
+  110 exprs: exprs • ',' expr
+
+    ','  troca e vai para estado 128
+    ')'  troca e vai para estado 202
+
+
+Estado 179
+
+   11 vardec: tPUBLIC tAUTO_TYPE • tID '=' expr
+
+    tID  troca e vai para estado 203
+
+
+Estado 180
+
+    9 vardec: tPUBLIC data_type • tID opt_initializer
+
+    tID  troca e vai para estado 204
+
+
+Estado 181
+
+    8 vardec: tFORWARD data_type • tID
+
+    tID  troca e vai para estado 205
+
+
+Estado 182
+
+   12 vardec: tAUTO_TYPE tID • '=' expr
+
+    '='  troca e vai para estado 32
+
+
+Estado 183
+
+   13 vardecs: vardec ';' •
+
+    $default  redução com regra 13 (vardecs)
+
+
+Estado 184
+
+   14 vardecs: vardecs vardec • ';'
+
+    ';'  troca e vai para estado 206
+
+
+Estado 185
+
+   56 stmt: tIF • '(' expr ')' stmt
+   57     | tIF • '(' expr ')' stmt iffalse
+
+    '('  troca e vai para estado 207
+
+
+Estado 186
+
+   58 stmt: tFOR • '(' opt_forinit ';' opt_exprs ';' opt_exprs ')' stmt
+
+    '('  troca e vai para estado 208
+
+
+Estado 187
+
+   62 stmt: tBREAK •
+
+    $default  redução com regra 62 (stmt)
+
+
+Estado 188
+
+   63 stmt: tCONTINUE •
+
+    $default  redução com regra 63 (stmt)
+
+
+Estado 189
+
+   50 return: tRETURN • ';'
+   51       | tRETURN • expr ';'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    ';'           troca e vai para estado 209
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 210
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 190
+
+   60 stmt: tPRINT • exprs ';'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 211
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 191
+
+   61 stmt: tPRINTLN • exprs ';'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 212
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 192
+
+   65 stmt: block •
+
+    $default  redução com regra 65 (stmt)
+
+
+Estado 193
+
+   64 stmt: return •
+
+    $default  redução com regra 64 (stmt)
+
+
+Estado 194
+
+   53 stmts: stmts • stmt
+   55 opt_stmts: stmts •
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tIF           troca e vai para estado 185
+    tFOR          troca e vai para estado 186
+    tBREAK        troca e vai para estado 187
+    tCONTINUE     troca e vai para estado 188
+    tRETURN       troca e vai para estado 189
+    tOBJECTS      troca e vai para estado 48
+    tPRINT        troca e vai para estado 190
+    tPRINTLN      troca e vai para estado 191
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '{'           troca e vai para estado 152
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    $default  redução com regra 55 (opt_stmts)
+
+    block           vai para estado 192
+    return          vai para estado 193
+    stmt            vai para estado 213
+    lvalue          vai para estado 61
+    expr            vai para estado 197
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 195
+
+   42 block: '{' opt_vardecs opt_stmts • '}'
+
+    '}'  troca e vai para estado 214
+
+
+Estado 196
+
+   52 stmts: stmt •
+
+    $default  redução com regra 52 (stmts)
+
+
+Estado 197
+
+   59 stmt: expr • ';'
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ';'            troca e vai para estado 215
+    '.'            troca e vai para estado 109
+
+
+Estado 198
+
+   10 vardec: data_type tID • opt_initializer
+
+    '='  troca e vai para estado 38
+
+    $default  redução com regra 26 (opt_initializer)
+
+    opt_initializer  vai para estado 40
+
+
+Estado 199
+
+   71 lvalue: tID '(' opt_exprs ')' '[' expr • ']'
+   72       | expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ']'            troca e vai para estado 216
+    '.'            troca e vai para estado 109
+
+
+Estado 200
+
+   70 lvalue: '(' expr ')' '[' expr ']' •
+
+    $default  redução com regra 70 (lvalue)
+
+
+Estado 201
+
+   81 expr: expr '.' tTDIM '(' expr ')' •
+
+    $default  redução com regra 81 (expr)
+
+
+Estado 202
+
+   82 expr: expr '.' tTRESHAPE '(' exprs ')' •
+
+    $default  redução com regra 82 (expr)
+
+
+Estado 203
+
+   11 vardec: tPUBLIC tAUTO_TYPE tID • '=' expr
+
+    '='  troca e vai para estado 41
+
+
+Estado 204
+
+    9 vardec: tPUBLIC data_type tID • opt_initializer
+
+    '='  troca e vai para estado 38
+
+    $default  redução com regra 26 (opt_initializer)
+
+    opt_initializer  vai para estado 44
+
+
+Estado 205
+
+    8 vardec: tFORWARD data_type tID •
+
+    $default  redução com regra 8 (vardec)
+
+
+Estado 206
+
+   14 vardecs: vardecs vardec ';' •
+
+    $default  redução com regra 14 (vardecs)
+
+
+Estado 207
+
+   56 stmt: tIF '(' • expr ')' stmt
+   57     | tIF '(' • expr ')' stmt iffalse
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 217
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 208
+
+   58 stmt: tFOR '(' • opt_forinit ';' opt_exprs ';' opt_exprs ')' stmt
+
+    tAUTO_TYPE    troca e vai para estado 218
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 219
+    tVOID_TYPE    troca e vai para estado 9
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    $default  redução com regra 46 (opt_forinit)
+
+    data_type       vai para estado 220
+    fordec          vai para estado 221
+    fordecs         vai para estado 222
+    opt_forinit     vai para estado 223
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 224
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 209
+
+   50 return: tRETURN ';' •
+
+    $default  redução com regra 50 (return)
+
+
+Estado 210
+
+   51 return: tRETURN expr • ';'
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ';'            troca e vai para estado 225
+    '.'            troca e vai para estado 109
+
+
+Estado 211
+
+   60 stmt: tPRINT exprs • ';'
+  110 exprs: exprs • ',' expr
+
+    ';'  troca e vai para estado 226
+    ','  troca e vai para estado 128
+
+
+Estado 212
+
+   61 stmt: tPRINTLN exprs • ';'
+  110 exprs: exprs • ',' expr
+
+    ';'  troca e vai para estado 227
+    ','  troca e vai para estado 128
+
+
+Estado 213
+
+   53 stmts: stmts stmt •
+
+    $default  redução com regra 53 (stmts)
+
+
+Estado 214
+
+   42 block: '{' opt_vardecs opt_stmts '}' •
+
+    $default  redução com regra 42 (block)
+
+
+Estado 215
+
+   59 stmt: expr ';' •
+
+    $default  redução com regra 59 (stmt)
+
+
+Estado 216
+
+   71 lvalue: tID '(' opt_exprs ')' '[' expr ']' •
+
+    $default  redução com regra 71 (lvalue)
+
+
+Estado 217
+
+   56 stmt: tIF '(' expr • ')' stmt
+   57     | tIF '(' expr • ')' stmt iffalse
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ')'            troca e vai para estado 228
+    '.'            troca e vai para estado 109
+
+
+Estado 218
+
+   48 opt_forinit: tAUTO_TYPE • tID '=' exprs
+
+    tID  troca e vai para estado 229
+
+
+Estado 219
+
+   21 data_type: tTENSOR_TYPE • '<' tensor_dims '>'
+   77 expr: tTENSOR_TYPE • '<' exprs '>'
+
+    '<'  troca e vai para estado 230
+
+
+Estado 220
+
+   43 fordec: data_type • tID '=' expr
+
+    tID  troca e vai para estado 231
+
+
+Estado 221
+
+   44 fordecs: fordec •
+
+    $default  redução com regra 44 (fordecs)
+
+
+Estado 222
+
+   45 fordecs: fordecs • ',' fordec
+   47 opt_forinit: fordecs •
+
+    ','  troca e vai para estado 232
+
+    $default  redução com regra 47 (opt_forinit)
+
+
+Estado 223
+
+   58 stmt: tFOR '(' opt_forinit • ';' opt_exprs ';' opt_exprs ')' stmt
+
+    ';'  troca e vai para estado 233
+
+
+Estado 224
+
+   49 opt_forinit: exprs •
+  110 exprs: exprs • ',' expr
+
+    ','  troca e vai para estado 128
+
+    $default  redução com regra 49 (opt_forinit)
+
+
+Estado 225
+
+   51 return: tRETURN expr ';' •
+
+    $default  redução com regra 51 (return)
+
+
+Estado 226
+
+   60 stmt: tPRINT exprs ';' •
+
+    $default  redução com regra 60 (stmt)
+
+
+Estado 227
+
+   61 stmt: tPRINTLN exprs ';' •
+
+    $default  redução com regra 61 (stmt)
+
+
+Estado 228
+
+   56 stmt: tIF '(' expr ')' • stmt
+   57     | tIF '(' expr ')' • stmt iffalse
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tIF           troca e vai para estado 185
+    tFOR          troca e vai para estado 186
+    tBREAK        troca e vai para estado 187
+    tCONTINUE     troca e vai para estado 188
+    tRETURN       troca e vai para estado 189
+    tOBJECTS      troca e vai para estado 48
+    tPRINT        troca e vai para estado 190
+    tPRINTLN      troca e vai para estado 191
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '{'           troca e vai para estado 152
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    block           vai para estado 192
+    return          vai para estado 193
+    stmt            vai para estado 234
+    lvalue          vai para estado 61
+    expr            vai para estado 197
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 229
+
+   48 opt_forinit: tAUTO_TYPE tID • '=' exprs
+
+    '='  troca e vai para estado 235
+
+
+Estado 230
+
+   21 data_type: tTENSOR_TYPE '<' • tensor_dims '>'
+   77 expr: tTENSOR_TYPE '<' • exprs '>'
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 236
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    tensor_dims     vai para estado 37
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 121
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 231
+
+   43 fordec: data_type tID • '=' expr
+
+    '='  troca e vai para estado 237
+
+
+Estado 232
+
+   45 fordecs: fordecs ',' • fordec
+
+    tSTRING_TYPE  troca e vai para estado 4
+    tINT_TYPE     troca e vai para estado 5
+    tREAL_TYPE    troca e vai para estado 6
+    tPTR_TYPE     troca e vai para estado 7
+    tTENSOR_TYPE  troca e vai para estado 8
+    tVOID_TYPE    troca e vai para estado 9
+
+    data_type  vai para estado 220
+    fordec     vai para estado 238
+
+
+Estado 233
+
+   58 stmt: tFOR '(' opt_forinit ';' • opt_exprs ';' opt_exprs ')' stmt
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    $default  redução com regra 111 (opt_exprs)
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 124
+    opt_exprs       vai para estado 239
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 234
+
+   56 stmt: tIF '(' expr ')' stmt •
+   57     | tIF '(' expr ')' stmt • iffalse
+
+    tELIF  troca e vai para estado 240
+    tELSE  troca e vai para estado 241
+
+    tELIF     [redução com regra 56 (stmt)]
+    tELSE     [redução com regra 56 (stmt)]
+    $default  redução com regra 56 (stmt)
+
+    iffalse  vai para estado 242
+
+
+Estado 235
+
+   48 opt_forinit: tAUTO_TYPE tID '=' • exprs
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 243
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 236
+
+   24 tensor_dims: tINTEGER •
+  114 integer: tINTEGER •
+
+    '>'       redução com regra 24 (tensor_dims)
+    '>'       [redução com regra 114 (integer)]
+    ','       redução com regra 24 (tensor_dims)
+    ','       [redução com regra 114 (integer)]
+    $default  redução com regra 114 (integer)
+
+
+Estado 237
+
+   43 fordec: data_type tID '=' • expr
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 244
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 238
+
+   45 fordecs: fordecs ',' fordec •
+
+    $default  redução com regra 45 (fordecs)
+
+
+Estado 239
+
+   58 stmt: tFOR '(' opt_forinit ';' opt_exprs • ';' opt_exprs ')' stmt
+
+    ';'  troca e vai para estado 245
+
+
+Estado 240
+
+   67 iffalse: tELIF • '(' expr ')' stmt iffalse
+
+    '('  troca e vai para estado 246
+
+
+Estado 241
+
+   66 iffalse: tELSE • stmt
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tIF           troca e vai para estado 185
+    tFOR          troca e vai para estado 186
+    tBREAK        troca e vai para estado 187
+    tCONTINUE     troca e vai para estado 188
+    tRETURN       troca e vai para estado 189
+    tOBJECTS      troca e vai para estado 48
+    tPRINT        troca e vai para estado 190
+    tPRINTLN      troca e vai para estado 191
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '{'           troca e vai para estado 152
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    block           vai para estado 192
+    return          vai para estado 193
+    stmt            vai para estado 247
+    lvalue          vai para estado 61
+    expr            vai para estado 197
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 242
+
+   57 stmt: tIF '(' expr ')' stmt iffalse •
+
+    $default  redução com regra 57 (stmt)
+
+
+Estado 243
+
+   48 opt_forinit: tAUTO_TYPE tID '=' exprs •
+  110 exprs: exprs • ',' expr
+
+    ','  troca e vai para estado 128
+
+    $default  redução com regra 48 (opt_forinit)
+
+
+Estado 244
+
+   43 fordec: data_type tID '=' expr •
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    '.'            troca e vai para estado 109
+
+    $default  redução com regra 43 (fordec)
+
+
+Estado 245
+
+   58 stmt: tFOR '(' opt_forinit ';' opt_exprs ';' • opt_exprs ')' stmt
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    $default  redução com regra 111 (opt_exprs)
+
+    lvalue          vai para estado 61
+    expr            vai para estado 120
+    exprs           vai para estado 124
+    opt_exprs       vai para estado 248
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 246
+
+   67 iffalse: tELIF '(' • expr ')' stmt iffalse
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tOBJECTS      troca e vai para estado 48
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    lvalue          vai para estado 61
+    expr            vai para estado 249
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 247
+
+   66 iffalse: tELSE stmt •
+
+    $default  redução com regra 66 (iffalse)
+
+
+Estado 248
+
+   58 stmt: tFOR '(' opt_forinit ';' opt_exprs ';' opt_exprs • ')' stmt
+
+    ')'  troca e vai para estado 250
+
+
+Estado 249
+
+   67 iffalse: tELIF '(' expr • ')' stmt iffalse
+   72 lvalue: expr • tTINDEX '(' exprs ')'
+   79 expr: expr • '.' tTCAPACITY
+   80     | expr • '.' tTRANK
+   81     | expr • '.' tTDIM '(' expr ')'
+   82     | expr • '.' tTRESHAPE '(' exprs ')'
+   83     | expr • tTCONTRACTION expr
+   86     | expr • '+' expr
+   87     | expr • '-' expr
+   88     | expr • '*' expr
+   89     | expr • '/' expr
+   90     | expr • '%' expr
+   91     | expr • '<' expr
+   92     | expr • tLE expr
+   93     | expr • tEQ expr
+   94     | expr • tGE expr
+   95     | expr • '>' expr
+   96     | expr • tNE expr
+   97     | expr • tAND expr
+   98     | expr • tOR expr
+
+    tTINDEX        troca e vai para estado 94
+    tTCONTRACTION  troca e vai para estado 95
+    tOR            troca e vai para estado 96
+    tAND           troca e vai para estado 97
+    tEQ            troca e vai para estado 98
+    tNE            troca e vai para estado 99
+    tGE            troca e vai para estado 100
+    tLE            troca e vai para estado 101
+    '>'            troca e vai para estado 102
+    '<'            troca e vai para estado 103
+    '+'            troca e vai para estado 104
+    '-'            troca e vai para estado 105
+    '*'            troca e vai para estado 106
+    '/'            troca e vai para estado 107
+    '%'            troca e vai para estado 108
+    ')'            troca e vai para estado 251
+    '.'            troca e vai para estado 109
+
+
+Estado 250
+
+   58 stmt: tFOR '(' opt_forinit ';' opt_exprs ';' opt_exprs ')' • stmt
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tIF           troca e vai para estado 185
+    tFOR          troca e vai para estado 186
+    tBREAK        troca e vai para estado 187
+    tCONTINUE     troca e vai para estado 188
+    tRETURN       troca e vai para estado 189
+    tOBJECTS      troca e vai para estado 48
+    tPRINT        troca e vai para estado 190
+    tPRINTLN      troca e vai para estado 191
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '{'           troca e vai para estado 152
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    block           vai para estado 192
+    return          vai para estado 193
+    stmt            vai para estado 252
+    lvalue          vai para estado 61
+    expr            vai para estado 197
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 251
+
+   67 iffalse: tELIF '(' expr ')' • stmt iffalse
+
+    tTENSOR_TYPE  troca e vai para estado 47
+    tIF           troca e vai para estado 185
+    tFOR          troca e vai para estado 186
+    tBREAK        troca e vai para estado 187
+    tCONTINUE     troca e vai para estado 188
+    tRETURN       troca e vai para estado 189
+    tOBJECTS      troca e vai para estado 48
+    tPRINT        troca e vai para estado 190
+    tPRINTLN      troca e vai para estado 191
+    tINPUT        troca e vai para estado 49
+    tSIZEOF       troca e vai para estado 50
+    tINTEGER      troca e vai para estado 51
+    tREAL         troca e vai para estado 52
+    tSTRING       troca e vai para estado 53
+    tID           troca e vai para estado 54
+    tNULLPTR      troca e vai para estado 55
+    '+'           troca e vai para estado 56
+    '-'           troca e vai para estado 57
+    '('           troca e vai para estado 58
+    '{'           troca e vai para estado 152
+    '['           troca e vai para estado 59
+    '~'           troca e vai para estado 60
+
+    block           vai para estado 192
+    return          vai para estado 193
+    stmt            vai para estado 253
+    lvalue          vai para estado 61
+    expr            vai para estado 197
+    tensor_literal  vai para estado 63
+    integer         vai para estado 64
+    real            vai para estado 65
+    string          vai para estado 66
+
+
+Estado 252
+
+   58 stmt: tFOR '(' opt_forinit ';' opt_exprs ';' opt_exprs ')' stmt •
+
+    $default  redução com regra 58 (stmt)
+
+
+Estado 253
+
+   67 iffalse: tELIF '(' expr ')' stmt • iffalse
+
+    tELIF  troca e vai para estado 240
+    tELSE  troca e vai para estado 241
+
+    iffalse  vai para estado 254
+
+
+Estado 254
+
+   67 iffalse: tELIF '(' expr ')' stmt iffalse •
+
+    $default  redução com regra 67 (iffalse)
